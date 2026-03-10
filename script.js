@@ -2,31 +2,27 @@
 const API_BASE_URL = "https://phi-lab-server.vercel.app/api/v1/lab";
 let allIssues = [];
 
-// Login 01
+// Simple Login 
 document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const user = document.getElementById('username').value;
     const pass = document.getElementById('password').value;
 
     if(user === 'admin' && pass === 'admin123') {
-        document.getElementById('login-page').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
+        document.getElementById('login-page').classList.add;
+        document.getElementById('main-content').classList.remove;
         fetchAllIssues(); 
     } else {
         alert('Invalid Credentials! (admin / admin123)');
     }
 });
 
-
-
-
-// All Issues api 02
-
+//  All Issues 
 async function fetchAllIssues() {
     toggleLoader(true);
     try {
         const response = await fetch(`${API_BASE_URL}/issues`);
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) throw new Error;
         
         const result = await response.json();
         
@@ -35,43 +31,21 @@ async function fetchAllIssues() {
         renderIssues(allIssues);
     } catch (error) {
         console.error("Fetch Error:", error);
-        alert
+        alert;
     } finally {
         toggleLoader(false);
     }
 }
-
-
-
 
 // 3. Render Cards
 function renderIssues(issues) {
-    const container 
-async function fetchAllIssues() {
-    toggleLoader(true);
-    try {
-        const response = await fetch(`${API_BASE_URL}/issues`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const result = await response.json();
-        
-        allIssues = result.data ? result.data : result;
-        
-        renderIssues(allIssues);
-    } catch (error) {
-        console.error("Fetch Error:", error);
-        alert
-    } finally {
-        toggleLoader(false);
-    }
-}
-= document.getElementById('issues-container');
-    const countDisplay = document.getElementById('issue-count');
+    const container = document.getElementById;
+    const countDisplay = document.getElementById;
     container.innerHTML = '';
     countDisplay.innerText = `${issues.length} Issues`;
 
     issues.forEach(issue => {
-        // Status color logic (Open = Green, Closed = Purple)
+        // Status color logic 
         const isClosed = issue.status?.toLowerCase() === 'closed';
         const borderClass = isClosed ? 'border-t-[#8b5cf6]' : 'border-t-[#22c55e]';
 
@@ -104,9 +78,7 @@ async function fetchAllIssues() {
     });
 }
 
-
-
-// 4. Single Issue 
+//Single Issue Fetch 
 async function fetchSingleIssue(id) {
     if (!id) return;
     toggleLoader(true);
@@ -115,8 +87,8 @@ async function fetchSingleIssue(id) {
         const result = await response.json();
         const issue = result.data ? result.data : result;
 
-        const modal = document.getElementById('modal');
-        const modalBody = document.getElementById('modal-content');
+        const modal = document.getElementById;
+        const modalBody = document.getElementById;
 
         
         modalBody.innerHTML = `
@@ -159,12 +131,37 @@ async function fetchSingleIssue(id) {
         modal.classList.remove('hidden');
     } catch (err) {
         console.error("Modal Error:", err);
-        alert
+        alert;
     } finally {
         toggleLoader(false);
     }
+}
 
+//Tabs & Search logic
+
+function filterIssues(status) {
+    document.querySelectorAll('[id^="btn-"]').forEach(btn => btn.classList.remove('active-tab'));
+    document.getElementById(`btn-${status}`).classList.add('active-tab');
+
+    if (status === 'all') renderIssues(allIssues);
+    else renderIssues(allIssues.filter(i => i.status.toLowerCase() === status));
+}
+
+document.getElementById('search-input').addEventListener('input', async (e) => {
+    const q = e.target.value.trim();
+    if(q.length > 1) {
+        const res = await fetch(`${API_BASE_URL}/issues/search?q=${q}`);
+        const result = await res.json();
+        renderIssues(result.data || result);
+    } else if (q === '') {
+        renderIssues(allIssues);
     }
+});
 
+function closeModal() { document.getElementById('modal').classList.add('hidden'); }
 
-    
+function toggleLoader(show) {
+    const loader = document.getElementById('loader');
+    if (show) loader.classList.remove('hidden');
+    else loader.classList.add('hidden');
+}
