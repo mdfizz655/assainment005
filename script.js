@@ -103,3 +103,68 @@ async function fetchAllIssues() {
         container.appendChild(card);
     });
 }
+
+
+
+// 4. Single Issue 
+async function fetchSingleIssue(id) {
+    if (!id) return;
+    toggleLoader(true);
+    try {
+        const response = await fetch(`${API_BASE_URL}/issue/${id}`);
+        const result = await response.json();
+        const issue = result.data ? result.data : result;
+
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modal-content');
+
+        
+        modalBody.innerHTML = `
+            <h2 class="text-3xl font-bold text-[#111827] mb-4">${issue.title}</h2>
+            
+            <div class="flex items-center gap-3 mb-6 text-[#6b7280] text-sm font-medium">
+                <span class="px-3 py-1 bg-[#059669] text-white rounded-full text-xs font-bold capitalize">${issue.status || 'Opened'}</span>
+                <span>•</span>
+                <span>Opened by <b class="text-gray-700">${issue.author}</b></span>
+                <span>•</span>
+                <span>${new Date(issue.createdAt).toLocaleDateString()}</span>
+            </div>
+            
+            <div class="flex gap-2 mb-8">
+                <span class="px-2 py-1 bg-[#fff1f2] text-[#f43f5e] rounded-lg border border-[#fecdd3] text-[11px] font-bold flex items-center gap-1">
+                    <i class="fas fa-bug text-[10px]"></i> BUG
+                </span>
+                <span class="px-2 py-1 bg-[#fffbeb] text-[#d97706] rounded-lg border border-[#fef3c7] text-[11px] font-bold flex items-center gap-1">
+                    <i class="fas fa-circle-info text-[10px]"></i> HELP WANTED
+                </span>
+            </div>
+
+            <p class="text-[#4b5563] leading-relaxed mb-10 text-[16px]">
+                ${issue.description}
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 bg-[#f9fafb] p-6 rounded-xl border border-gray-100">
+                <div>
+                    <p class="text-[#9ca3af] text-xs font-semibold mb-1 uppercase tracking-wider">Assignee:</p>
+                    <p class="font-bold text-[#111827] text-lg">${issue.author}</p>
+                </div>
+                <div>
+                    <p class="text-[#9ca3af] text-xs font-semibold mb-1 uppercase tracking-wider">Priority:</p>
+                    <span class="px-4 py-1.5 bg-[#ef4444] text-white rounded-lg text-[11px] font-bold uppercase">
+                        ${issue.priority || 'HIGH'}
+                    </span>
+                </div>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+    } catch (err) {
+        console.error("Modal Error:", err);
+        alert
+    } finally {
+        toggleLoader(false);
+    }
+
+    }
+
+
+    
